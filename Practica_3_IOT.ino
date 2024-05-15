@@ -129,7 +129,7 @@ class FlowSensor {
 };
 
 // Creamos una instancia FlowSensor con el factor de calibración respectivo
-FlowSensor flowSensor(7.5);
+FlowSensor flowSensor(3);
 
 // Función para contar los pulsos del sensor de flujo
 void IRAM_ATTR pulseCounter() {
@@ -138,7 +138,6 @@ void IRAM_ATTR pulseCounter() {
 
 // Calculo de la la tasa de flujo
 void calculateFlowRate(unsigned long currentMillis) {
- 
   // Verifica si ha pasado 1.5 segundos desde la última vez que se calculó la tasa de flujo
   if (currentMillis - previousMillis > 1500) {
     byte pulse1Sec = pulseCount;
@@ -185,10 +184,9 @@ class SolenoidValve {
 
 // Creamos una instancia de SolenoidValve
 SolenoidValve solenoidValve(Solenoid_Valve_PIN);
-1
+
 // Función de callback para procesar los mensajes recibidos del servidor MQTT
 void callback(const char * topic, byte * payload, unsigned int length) {
- 
   DeserializationError err = deserializeJson(inputDoc, payload); // Deserializa el mensaje JSON
   if (!err) {
     if (String(topic) == UPDATE_DELTA_TOPIC) { 
@@ -235,9 +233,7 @@ class MQTTHandler {
         delay(100); 
         mqttClient.subscribe(UPDATE_DELTA_TOPIC); // Suscripcion al topico de actualización delta
         Serial.println("Subscribed to " + String(UPDATE_DELTA_TOPIC)); 
-
         delay(100); 
-        //reportBuiltInLed();
       }
     }
 
@@ -294,13 +290,6 @@ void calculateFlowAndPublishData(unsigned long currentMillis) {
   calculateFlowRate(currentMillis);
   calculateTotalFlow();
   reportWaterSensor();
-  //printFlowData();
-  // Leer y mostrar el estado de la válvula solenoide
-  if (solenoidValve.isOpened() == 1) {
-    Serial.println("Válvula abierta");
-  } else {
-    Serial.println("Válvula cerrada");
-  }
 }
 
 void loop() {
